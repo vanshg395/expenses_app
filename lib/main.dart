@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () => _startAddNewTransaction(context),
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
