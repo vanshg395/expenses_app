@@ -19,7 +19,7 @@ class TransactionList extends StatelessWidget {
                   elevation: 7,
                   margin: EdgeInsets.symmetric(
                     vertical: 5,
-                    horizontal: 15,
+                    horizontal: 20,
                   ),
                   child: Row(
                     children: <Widget>[
