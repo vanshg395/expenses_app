@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './widgets/transactionList.dart';
-import './widgets/newTransaction.dart';
+import './widgets/new_transaction.dart';
+import './widgets/transaction_list.dart';
 import './widgets/chart.dart';
 import './models/transaction.dart';
 
@@ -11,32 +11,37 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Personal Expenses",
+      title: 'Personal Expenses',
       theme: ThemeData(
-        primarySwatch: Colors.green,
-        fontFamily: "Quicksand",
-        textTheme: ThemeData.light().textTheme.copyWith(
-              title: TextStyle(
-                fontFamily: "OpenSans",
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+          primarySwatch: Colors.green,
+          accentColor: Colors.green,
+          // errorColor: Colors.red,
+          fontFamily: 'Quicksand',
+          textTheme: ThemeData.light().textTheme.copyWith(
+                title: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+                button: TextStyle(color: Colors.white),
               ),
-            ),
-        appBarTheme: AppBarTheme(
+          appBarTheme: AppBarTheme(
             textTheme: ThemeData.light().textTheme.copyWith(
                   title: TextStyle(
-                    fontFamily: "OpenSans",
+                    fontFamily: 'OpenSans',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
-                )),
-      ),
+                ),
+          )),
       home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  // String titleInput;
+  // String amountInput;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -44,30 +49,35 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
     // Transaction(
-    //   id: "t1",
-    //   title: "New Shoes",
-    //   amount: 5000,
+    //   id: 't1',
+    //   title: 'New Shoes',
+    //   amount: 69.99,
     //   date: DateTime.now(),
     // ),
     // Transaction(
-    //   id: "t2",
-    //   title: "New Shirt",
-    //   amount: 2000,
+    //   id: 't2',
+    //   title: 'Weekly Groceries',
+    //   amount: 16.53,
     //   date: DateTime.now(),
     // ),
   ];
 
   List<Transaction> get _recentTransactions {
-    return _userTransactions.where( (tx) {
-      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    return _userTransactions.where((tx) {
+      return tx.date.isAfter(
+        DateTime.now().subtract(
+          Duration(days: 7),
+        ),
+      );
     }).toList();
   }
 
-  void _addNewTransaction(String txTitle, double txAmount) {
+  void _addNewTransaction(
+      String txTitle, double txAmount, DateTime chosenDate) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
-      date: DateTime.now(),
+      date: chosenDate,
       id: DateTime.now().toString(),
     );
 
@@ -78,13 +88,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
-        context: ctx,
-        builder: (_) {
-          return GestureDetector(
-            child: NewTransaction(_addNewTransaction),
-            onTap: () {},
-          );
-        });
+      context: ctx,
+      builder: (_) {
+        return GestureDetector(
+          onTap: () {},
+          child: NewTransaction(_addNewTransaction),
+          behavior: HitTestBehavior.opaque,
+        );
+      },
+    );
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((tx) => tx.id == id);
+    });
   }
 
   @override
@@ -92,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Personal Expenses",
+          'Personal Expenses',
         ),
         actions: <Widget>[
           IconButton(
@@ -103,18 +121,19 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Chart(_recentTransactions),
-            TransactionList(_userTransactions),
+            TransactionList(_userTransactions, _deleteTransaction),
           ],
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => _startAddNewTransaction(context),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
